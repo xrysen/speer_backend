@@ -23,7 +23,16 @@ const getUserByName = (name) => {
   );
 }
 
+const deleteUserByUserName = (userName) => {
+  pool.query(
+    `
+    DELETE FROM users WHERE user_name = $1
+    `
+  , [userName]);
+}
+
 module.exports = {
   registerNewUser,
-  getUserByName
+  getUserByName,
+  deleteUserByUserName
 }

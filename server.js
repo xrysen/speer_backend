@@ -31,9 +31,9 @@ app.post("/register", (req, res) => {
           req.body.email,
           bcrypt.hashSync(req.body.password, 10)
         );
+        res.status(200).send("User added successfully")
       }
     })
-    .then(() => res.status(200).send("User added successfully"))
     .catch((err) => res.status(400).send(err));
 });
 
@@ -55,6 +55,8 @@ app.post("/login", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
+module.exports = server;
