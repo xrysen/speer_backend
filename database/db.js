@@ -13,26 +13,41 @@ const registerNewUser = (name, userName, email, password) => {
     `
     INSERT INTO users (name, user_name, email, password) 
     VALUES ($1, $2, $3, $4);
-    `, [name, userName, email, password]
+    `,
+    [name, userName, email, password]
   );
-}
+};
 
 const getUserByName = (name) => {
-  return pool.query (
-    `SELECT * FROM users WHERE user_name = '${name}'; `
-  );
-}
+  return pool.query(`SELECT * FROM users WHERE user_name = '${name}'; `);
+};
 
 const deleteUserByUserName = (userName) => {
   pool.query(
     `
     DELETE FROM users WHERE user_name = $1
-    `
-  , [userName]);
-}
+    `,
+    [userName]
+  );
+};
+
+const resetUserTable = async () => {
+  await pool.query(
+    `DROP IF EXISTS users CASCADE;
+
+    CREATE TABLE users (
+      id SERIAL PRIMARY KEY NOT NULL,
+      name VARCHAR(255) NOT NULL,
+      user_name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) NOT NULL,
+      password VARCHAR(255) NOT NULL
+    );`
+  );
+};
 
 module.exports = {
   registerNewUser,
   getUserByName,
-  deleteUserByUserName
-}
+  deleteUserByUserName,
+  resetUserTable
+};

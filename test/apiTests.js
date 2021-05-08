@@ -4,6 +4,7 @@ const chaiHTTP = require("chai-http");
 const server = require("../server");
 const should = chai.should();
 const db = require("../database/db");
+const bcrypt = require("bcrypt");
 
 require("dotenv").config();
 
@@ -13,14 +14,12 @@ chai.use(chaiHTTP);
 
 describe("/POST /register", () => {
 
-  before((done) => {
-    db.deleteUserByUserName("superbob");
+  before(() => {
     db.getUserByName("sassysal").then((result) => {
       if (!result.rows.length) {
-        db.registerNewUser("Sally", "sassySal", "sassySal@gmail.com", "myMaidenName");
+        db.registerNewUser("Sally", "sassysal", "sassySal@gmail.com", bcrypt.hashSync("ComeHackMeBro", 10));
       }
-    });
-    done();
+    }).then(() => { db.deleteUserByUserName("superbob"); done(); });
   })
 
   it("Should return status of 200 on succesfull register", (done) => {
