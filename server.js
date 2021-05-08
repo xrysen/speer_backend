@@ -36,9 +36,11 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   db.getUserByName(req.body.userName).then((result) => {
+    // Check if user name exists and password is correct
     if (!result.rows.length || !bcrypt.compareSync(req.body.password, result.rows[0].password)) {
       res.status(400).send("Either the user name or password are incorrect");
     } else {
+      // Login user and start cookie session
       req.session.userId = result.rows[0].id;
       res.status(200).send("Succesfully logged in");
     }
