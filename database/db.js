@@ -39,7 +39,7 @@ const getMessageById = (id) => {
 }
 
 const getMessageSession = (senderId, recId) => {
-  return pool.query(`SELECT * FROM messages WHERE sender_id = ${senderId} AND rec_id = ${recId} ORDER BY sent_on;`);
+  return pool.query(`SELECT * FROM messages WHERE sender_id = ${senderId} AND rec_id = ${recId} OR (rec_id = ${senderId} AND sender_id = ${recId}) ORDER BY sent_on;`);
 }
 
 const getUserByName = (name) => {
