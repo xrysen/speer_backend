@@ -45,8 +45,22 @@ app.post("/messages", (req, res) => {
   })
 })
 
-app.get("/messages/:id", (req, res) => {
+app.post("/tweets", (req, res) => {
+  if (!req.session.userId) {
+    res.status(400).send("You must be logged in to view this page");
+  } else {
+    db.createTweet(req.session.userId, req.body.msgBody);
+    res.status(200).send("Tweet created!");
+  }
+})
 
+app.get("/tweets", (req, res) => {
+  if (!req.session.userId) {
+    res.status(400).send("You must be logged in to view this page");
+  } else {
+    db.getTweetsForUser(req.session.userId)
+    .then((result) => res.status(200).send(result.rows));
+  }
 })
 
 app.post("/register", (req, res) => {

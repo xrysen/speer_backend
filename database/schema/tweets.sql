@@ -3,6 +3,6 @@ DROP TABLE IF EXISTS tweets CASCADE;
 CREATE TABLE tweets (
   id SERIAL PRIMARY KEY NOT NULL,
   body TEXT NOT NULL,
-  date TIMESTAMP NOT NULL,
-  user_id INTEGER references users(id) ON DELETE CASCADE
+  user_id INTEGER references users(id) ON DELETE CASCADE,
+  date TIMESTAMP NOT NULL
 );

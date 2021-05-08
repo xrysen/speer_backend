@@ -24,23 +24,26 @@ const createMessage = (sender, receiver, msgBody) => {
     `
     INSERT INTO messages (sender_id, rec_id, msg_body, sent_on)
     VALUES ($1, $2, $3, NOW());
-    `, [sender, receiver, msgBody]
-  )
-}
+    `,
+    [sender, receiver, msgBody]
+  );
+};
 
 const getAllMessagesForUser = (user) => {
   return pool.query(
     `SELECT msg_body FROM messages WHERE sender_id = '${user}';`
   );
-}
+};
 
 const getMessageById = (id) => {
   return pool.query(`SELECT * FROM messages WHERE id = ${id};`);
-}
+};
 
 const getMessageSession = (senderId, recId) => {
-  return pool.query(`SELECT * FROM messages WHERE sender_id = ${senderId} AND rec_id = ${recId} OR (rec_id = ${senderId} AND sender_id = ${recId}) ORDER BY sent_on;`);
-}
+  return pool.query(
+    `SELECT * FROM messages WHERE sender_id = ${senderId} AND rec_id = ${recId} OR (rec_id = ${senderId} AND sender_id = ${recId}) ORDER BY sent_on;`
+  );
+};
 
 const getUserByName = (name) => {
   return pool.query(`SELECT * FROM users WHERE user_name = '${name}'; `);
@@ -48,7 +51,7 @@ const getUserByName = (name) => {
 
 const getUserById = (id) => {
   return pool.query(`SELECT * FROM users WHERE id = ${id};`);
-}
+};
 
 const deleteUserByUserName = (userName) => {
   pool.query(
@@ -73,6 +76,20 @@ const resetUserTable = async () => {
   );
 };
 
+const createTweet = (userId, msgBody) => {
+  pool.query(
+    `
+    INSERT INTO tweets (body, user_id, date)
+    VALUES ($2, $1, NOW());
+    `
+  ,
+    [userId, msgBody]);
+};
+
+const getTweetsForUser = (userId) => {
+  return pool.query(`SELECT * FROM tweets WHERE user_id = ${userId};`);
+};
+
 module.exports = {
   registerNewUser,
   getUserByName,
@@ -82,5 +99,7 @@ module.exports = {
   getAllMessagesForUser,
   getUserById,
   getMessageById,
-  getMessageSession
+  getMessageSession,
+  createTweet,
+  getTweetsForUser
 };
