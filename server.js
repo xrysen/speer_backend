@@ -18,7 +18,7 @@ app.use(
 );
 
 app.post("/register", (req, res) => {
-  db.getUserByName(req.body.userName)
+  db.getUserByName(req.body.userName.toLowerCase())
     .then((result) => {
       if (result.rows.length) {
         res
@@ -27,7 +27,7 @@ app.post("/register", (req, res) => {
       } else {
         db.registerNewUser(
           req.body.name,
-          req.body.userName,
+          req.body.userName.toLowerCase(),
           req.body.email,
           bcrypt.hashSync(req.body.password, 10)
         );
@@ -55,6 +55,8 @@ app.post("/login", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
+module.exports = server;
