@@ -19,7 +19,7 @@ const registerNewUser = (name, userName, email, password) => {
 
 const getUserByName = (name) => {
   return pool.query (
-    `SELECT users.id FROM users WHERE user_name = '${name}'; `
+    `SELECT * FROM users WHERE user_name = '${name}'; `
   );
 }
 

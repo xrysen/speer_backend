@@ -34,6 +34,17 @@ app.post("/register", (req, res) => {
   .catch(err => res.status(400).send(err));
 });
 
+app.post("/login", (req, res) => {
+  db.getUserByName(req.body.userName).then((result) => {
+    if (!result.rows.length || !bcrypt.compareSync(req.body.password, result.rows[0].password)) {
+      res.status(400).send("Either the user name or password are incorrect");
+    } else {
+      req.session.userId = result.rows[0].id;
+      res.status(200).send("Succesfully logged in");
+    }
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
