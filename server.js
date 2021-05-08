@@ -54,6 +54,15 @@ app.post("/tweets", (req, res) => {
   }
 })
 
+app.delete("/tweets", (req, res) => {
+  if (!req.session.userId) {
+    res.status(400).send("You must be logged in to view this page");
+  } else {
+    db.deleteTweetById(req.body.tweetId);
+    res.status(200).send("Successfully deleted");
+  }
+})
+
 app.get("/tweets", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");

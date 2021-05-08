@@ -90,6 +90,10 @@ const getTweetsForUser = (userId) => {
   return pool.query(`SELECT * FROM tweets WHERE user_id = ${userId};`);
 };
 
+const deleteTweetById = (tweetId) => {
+  pool.query(`DELETE FROM tweets WHERE id = $1;`, [tweetId]);
+}
+
 module.exports = {
   registerNewUser,
   getUserByName,
@@ -101,5 +105,6 @@ module.exports = {
   getMessageById,
   getMessageSession,
   createTweet,
-  getTweetsForUser
+  getTweetsForUser,
+  deleteTweetById
 };
