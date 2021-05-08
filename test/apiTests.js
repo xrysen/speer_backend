@@ -14,8 +14,12 @@ chai.use(chaiHTTP);
 describe("/POST /register", () => {
 
   before((done) => {
-    db.deleteUserByUserName("superBob");
-    db.registerNewUser("Sally", "sassySal", "sassySal@gmail.com", "myMaidenName");
+    db.deleteUserByUserName("superbob");
+    db.getUserByName("sassysal").then((result) => {
+      if (!result.rows.length) {
+        db.registerNewUser("Sally", "sassySal", "sassySal@gmail.com", "myMaidenName");
+      }
+    });
     done();
   })
 
@@ -42,6 +46,25 @@ describe("/POST /register", () => {
     const user = {
       name: "Sally",
       userName: "sassySal",
+      email: "sassySal@gmail.com",
+      password: "password"
+    }
+
+    chai.request(server).post("/register")
+    .send(user)
+    .end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
+      res.should.have.status(400);
+    })
+    done();
+  })
+
+  it("Username isn't case sensitive", (done) => {
+    const user = {
+      name: "Sally",
+      userName: "SAssySaL",
       email: "sassySal@gmail.com",
       password: "password"
     }
