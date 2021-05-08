@@ -72,6 +72,22 @@ app.get("/tweets", (req, res) => {
   }
 })
 
+app.get("/tweets/:id", (req, res) => {
+  db.getTweetById(req.params.id)
+  .then((result) => {
+    if (!result.rows.length) {
+      res.status(400).send("Tweet with that id doesn't exist");
+    } else {
+      res.status(200).send(result.rows);
+    }
+  })
+})
+
+app.put("/tweets/", (req, res) => {
+  db.updateTweetById(req.body.id, req.body.msg);
+  res.status(200).send("Tweet Updated");
+})
+
 app.post("/register", (req, res) => {
   db.getUserByName(req.body.userName.toLowerCase())
     .then((result) => {

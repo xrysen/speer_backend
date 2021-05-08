@@ -90,8 +90,20 @@ const getTweetsForUser = (userId) => {
   return pool.query(`SELECT * FROM tweets WHERE user_id = ${userId};`);
 };
 
+const getTweetById = (tweetId) => {
+  return pool.query(`SELECT * FROM tweets WHERE id = $1`, [tweetId]);
+}
+
 const deleteTweetById = (tweetId) => {
   pool.query(`DELETE FROM tweets WHERE id = $1;`, [tweetId]);
+}
+
+const updateTweetById = (tweetId, msgBody) => {
+  pool.query(
+    `
+    UPDATE tweets SET body = $2 WHERE id = $1;
+    `, [tweetId, msgBody]
+  );
 }
 
 module.exports = {
@@ -106,5 +118,7 @@ module.exports = {
   getMessageSession,
   createTweet,
   getTweetsForUser,
-  deleteTweetById
+  deleteTweetById,
+  getTweetById,
+  updateTweetById
 };
