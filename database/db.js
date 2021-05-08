@@ -101,7 +101,7 @@ const deleteTweetById = (tweetId) => {
 const updateTweetById = (tweetId, msgBody) => {
   pool.query(
     `
-    UPDATE tweets SET body = $2 WHERE id = $1;
+    UPDATE tweets SET body = $2, date = NOW() WHERE id = $1;
     `, [tweetId, msgBody]
   );
 }
