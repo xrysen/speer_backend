@@ -18,9 +18,37 @@ const registerNewUser = (name, userName, email, password) => {
   );
 };
 
+const createMessage = (sender, receiver, msgBody) => {
+  const timeStamp = new Date();
+  pool.query(
+    `
+    INSERT INTO messages (sender_id, rec_id, msg_body, sent_on)
+    VALUES ($1, $2, $3, NOW());
+    `, [sender, receiver, msgBody]
+  )
+}
+
+const getAllMessagesForUser = (user) => {
+  return pool.query(
+    `SELECT msg_body FROM messages WHERE sender_id = '${user}';`
+  );
+}
+
+const getMessageById = (id) => {
+  return pool.query(`SELECT * FROM messages WHERE id = ${id};`);
+}
+
+const getMessageSession = (senderId, recId) => {
+  return pool.query(`SELECT * FROM messages WHERE sender_id = ${senderId} AND rec_id = ${recId} ORDER BY sent_on;`);
+}
+
 const getUserByName = (name) => {
   return pool.query(`SELECT * FROM users WHERE user_name = '${name}'; `);
 };
+
+const getUserById = (id) => {
+  return pool.query(`SELECT * FROM users WHERE id = ${id};`);
+}
 
 const deleteUserByUserName = (userName) => {
   pool.query(
@@ -49,5 +77,10 @@ module.exports = {
   registerNewUser,
   getUserByName,
   deleteUserByUserName,
-  resetUserTable
+  resetUserTable,
+  createMessage,
+  getAllMessagesForUser,
+  getUserById,
+  getMessageById,
+  getMessageSession
 };

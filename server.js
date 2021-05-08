@@ -17,6 +17,38 @@ app.use(
   })
 );
 
+app.get("/messages", (req, res) => {
+  if (!req.session.userId) {
+    res.status(400).send("You must be logged in to view this page");
+  } else {
+    db.getUserById(req.query.session).then((result) => {
+      if (!result.rows.length) {
+        res.status(400).send("User doesn't exist");
+      } else {
+        db.getMessageSession(req.session.userId, req.query.session)
+        .then((result) => res.status(200).send(result.rows));
+      }
+    })
+  }
+})
+
+app.post("/messages", (req, res) => {
+  db.getUserById(req.body.receiver).then((result) => {
+    if (!req.session.userId) {
+      res.status(400).send("You must be logged in to send a message");
+    } else if (!result.rows.length) {
+      res.status(400).send("User doesn't exist");
+    } else {
+      db.createMessage(req.session.userId, req.body.receiver, req.body.msgBody);
+      res.status(200).send("Message sent!");
+    }
+  })
+})
+
+app.get("/messages/:id", (req, res) => {
+
+})
+
 app.post("/register", (req, res) => {
   db.getUserByName(req.body.userName.toLowerCase())
     .then((result) => {
@@ -54,6 +86,11 @@ app.post("/login", (req, res) => {
     })
     .catch((err) => console.log(err));
 });
+
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.status(200).send("Succesfully logged out");
+})
 
 const server = app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
