@@ -44,7 +44,7 @@ describe("Tweets", () => {
       .end((err, res) => {
         return agent
           .post("/tweets")
-          .send({ msgBody: "Testing Tweets" })
+          .send({ msgBody: "Testing Tweets", isRetweet: "false" })
           .end((err, res) => {
             res.should.have.status(200);
             agent.close();
@@ -83,4 +83,36 @@ describe("Tweets", () => {
           });
       });
   });
+
+  it ("Should allow a logged in user to retweet a post", () => {
+    const agent = chai.request.agent(server);
+    agent
+    .post("/login")
+    .send({userName: "sassysally", password: "ComeHackMeBro"})
+    .end((err, res) => {
+      return agent
+      .post("/tweets")
+      .send({msgBody: "Check this out!", isRetweet: "true", retweetId: 1})
+      .end((err, res) => {
+        res.should.have.status(200);
+        agent.close();
+      })
+    })
+  })
+
+  it ("Should not allow a user to retweet a post that doesn't exist", () => {
+    const agent = chai.request.agent(server);
+    agent
+    .post("/login")
+    .send({userName: "sassysally", password: "ComeHackMeBro"})
+    .end((err, res) => {
+      return agent
+      .post("/tweets")
+      .send({msgBody: "Check this out!", isRetweet: "true", retweetId: 30})
+      .end((err, res) => {
+        res.should.have.status(400);
+        agent.close();
+      })
+    })
+  })
 });
