@@ -3,6 +3,7 @@ const app = express();
 const cookieSession = require("cookie-session");
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const PORT = 8000 || process.env.PORT;
 

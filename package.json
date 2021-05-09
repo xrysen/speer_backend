@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -- --grep 'Tweets'",
+    "test": "mocha -- --grep 'Likes'",
     "start": "nodemon server.js"
   },
   "keywords": [],

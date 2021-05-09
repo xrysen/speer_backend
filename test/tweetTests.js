@@ -62,6 +62,7 @@ describe("Tweets", () => {
           .put("/tweets")
           .send({ id: 1, msg: "Updated tweet" })
           .end((err, res) => {
+            console.log(res.text);
             res.should.have.status(200);
             agent.close();
           });
