@@ -3,7 +3,10 @@ const app = express();
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 
-const db = require("./database/db");
+const dbTweets = require("./database/helpers/dbTweets");
+const dbLikes = require("./database/helpers/dbLikes");
+const dbUsers = require("./database/helpers/dbUsers");
+const dbMessages = require("./database/helpers/dbMessages");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -17,15 +20,39 @@ app.use(
   })
 );
 
+app.post("/like", (req, res) => {
+  if (!req.session.userId) {
+    res.status(400).send("You must be logged in to view this page");
+  } else {
+    dbTweets.getTweetById(req.body.tweetId)
+    .then((result) => {
+      if (!result.rows.length) {
+        res.status(400).send("The tweet with this id doesn't exist");
+      } else {
+        dbLikes.userAlreadyLikesTweet(req.session.userId, req.body.tweetId)
+        .then((result) => {
+          if (!result.rows.length) {
+            dbLikes.addLikeToTweet(req.session.userId, req.body.tweetId)
+            res.status(200).send("Successfully liked tweet");
+          } else {
+            dbLikes.removeLikeFromTweet(req.session.userId, req.body.tweetId);
+            res.status(200).send("Successfully removed like from tweet");
+          }
+        })
+      }
+    })
+  }
+})
+
 app.get("/messages", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
   } else {
-    db.getUserById(req.query.session).then((result) => {
+    dbUsers.getUserById(req.query.session).then((result) => {
       if (!result.rows.length) {
         res.status(400).send("User doesn't exist");
       } else {
-        db.getMessageSession(req.session.userId, req.query.session)
+        dbMessages.getMessageSession(req.session.userId, req.query.session)
         .then((result) => res.status(200).send(result.rows));
       }
     })
@@ -33,13 +60,13 @@ app.get("/messages", (req, res) => {
 })
 
 app.post("/messages", (req, res) => {
-  db.getUserById(req.body.receiver).then((result) => {
+  dbUsers.getUserById(req.body.receiver).then((result) => {
     if (!req.session.userId) {
       res.status(400).send("You must be logged in to send a message");
     } else if (!result.rows.length) {
       res.status(400).send("User doesn't exist");
     } else {
-      db.createMessage(req.session.userId, req.body.receiver, req.body.msgBody);
+      dbMessages.createMessage(req.session.userId, req.body.receiver, req.body.msgBody);
       res.status(200).send("Message sent!");
     }
   })
@@ -49,7 +76,7 @@ app.post("/tweets", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
   } else {
-    db.createTweet(req.session.userId, req.body.msgBody);
+    dbTweets.createTweet(req.session.userId, req.body.msgBody);
     res.status(200).send("Tweet created!");
   }
 })
@@ -58,7 +85,7 @@ app.delete("/tweets", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
   } else {
-    db.deleteTweetById(req.body.tweetId);
+    dbTweets.deleteTweetById(req.body.tweetId);
     res.status(200).send("Successfully deleted");
   }
 })
@@ -67,13 +94,13 @@ app.get("/tweets", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
   } else {
-    db.getTweetsForUser(req.session.userId)
+    dbTweets.getTweetsForUser(req.session.userId)
     .then((result) => res.status(200).send(result.rows));
   }
 })
 
 app.get("/tweets/:id", (req, res) => {
-  db.getTweetById(req.params.id)
+  dbTweets.getTweetById(req.params.id)
   .then((result) => {
     if (!result.rows.length) {
       res.status(400).send("Tweet with that id doesn't exist");
@@ -84,26 +111,26 @@ app.get("/tweets/:id", (req, res) => {
 })
 
 app.put("/tweets/", (req, res) => {
-  db.getTweetById(req.body.id)
+  dbTweets.getTweetById(req.body.id)
   .then((result) => {
     if (!result.rows.length) {
       res.status(400).send("Tweet with that id doesn't exist");
     } else {
-      db.updateTweetById(req.body.id, req.body.msg);
+      dbTweets.updateTweetById(req.body.id, req.body.msg);
       res.status(200).send("Tweet Updated");
     }
   })
 })
 
 app.post("/register", (req, res) => {
-  db.getUserByName(req.body.userName.toLowerCase())
+  dbUsers.getUserByName(req.body.userName.toLowerCase())
     .then((result) => {
       if (result.rows.length) {
         res
           .status(400)
           .send("A user with that name already exists. Please try another");
       } else {
-        db.registerNewUser(
+        dbUsers.registerNewUser(
           req.body.name,
           req.body.userName.toLowerCase(),
           req.body.email,
@@ -116,7 +143,7 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  db.getUserByName(req.body.userName.toLowerCase())
+  dbUsers.getUserByName(req.body.userName.toLowerCase())
     .then((result) => {
       // Check if user name exists and password is correct
       if (
