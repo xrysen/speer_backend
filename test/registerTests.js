@@ -1,4 +1,4 @@
-const { assert } = require("chai");
+const { assert, expect } = require("chai");
 const chai = require("chai");
 const chaiHTTP = require("chai-http");
 const server = require("../server");
@@ -11,7 +11,6 @@ process.env.NODE_ENV = "test";
 chai.use(chaiHTTP);
 
 describe("/POST /register", () => {
-
   before(() => {
     db.pool.query(
       `DROP TABLE IF EXISTS users CASCADE;
@@ -29,45 +28,54 @@ describe("/POST /register", () => {
     );
   });
 
-  it ("Should return a status of 200 on succesfull registration", () => {
+  it("Should return a status of 200 on succesfull registration", () => {
     const user = {
       name: "bob",
       userName: "superBob",
       email: "bob@gmail.com",
-      password: "password"
-    }
+      password: "password",
+    };
 
-    chai.request(server).post("/register").send(user)
-    .end((err, res) => {
-      res.should.have.status(200);
-    })
-  })
+    chai
+      .request(server)
+      .post("/register")
+      .send(user)
+      .end((err, res) => {
+        res.should.have.status(200);
+      });
+  });
 
-  it ("Shouldn't allow a user to register with the same user name", () => {
+  it("Shouldn't allow a user to register with the same user name", () => {
     const user = {
       name: "Sally",
       userName: "sassysally",
       email: "sally@gmail.com",
-      password: "password"
-    }
+      password: "password",
+    };
 
-    chai.request(server).post("/register").send(user)
-    .end((err, res) => {
-      res.should.have.status(400);
-    })
-  })
+    chai
+      .request(server)
+      .post("/register")
+      .send(user)
+      .end((err, res) => {
+        res.should.have.status(400);
+      });
+  });
 
-  it ("User names aren't case sensitive", () => {
+  it("User names aren't case sensitive", () => {
     const user = {
       name: "Sally",
       userName: "SasSySalLy",
       email: "sally@gmaill.com",
-      password: "password"
-    }
+      password: "password",
+    };
 
-    chai.request(server).post("/register").send(user)
-    .end((err, res) => {
-      res.should.have.status(400);
-    })
-  })
+    chai
+      .request(server)
+      .post("/register")
+      .send(user)
+      .end((err, res) => {
+        res.should.have.status(400);
+      });
+  });
 });
