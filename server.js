@@ -24,25 +24,25 @@ app.post("/like", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
   } else {
-    dbTweets.getTweetById(req.body.tweetId)
-    .then((result) => {
+    dbTweets.getTweetById(req.body.tweetId).then((result) => {
       if (!result.rows.length) {
         res.status(400).send("The tweet with this id doesn't exist");
       } else {
-        dbLikes.userAlreadyLikesTweet(req.session.userId, req.body.tweetId)
-        .then((result) => {
-          if (!result.rows.length) {
-            dbLikes.addLikeToTweet(req.session.userId, req.body.tweetId)
-            res.status(200).send("Successfully liked tweet");
-          } else {
-            dbLikes.removeLikeFromTweet(req.session.userId, req.body.tweetId);
-            res.status(200).send("Successfully removed like from tweet");
-          }
-        })
+        dbLikes
+          .userAlreadyLikesTweet(req.session.userId, req.body.tweetId)
+          .then((result) => {
+            if (!result.rows.length) {
+              dbLikes.addLikeToTweet(req.session.userId, req.body.tweetId);
+              res.status(200).send("Successfully liked tweet");
+            } else {
+              dbLikes.removeLikeFromTweet(req.session.userId, req.body.tweetId);
+              res.status(200).send("Successfully removed like from tweet");
+            }
+          });
       }
-    })
+    });
   }
-})
+});
 
 app.get("/messages", (req, res) => {
   if (!req.session.userId) {
@@ -52,12 +52,13 @@ app.get("/messages", (req, res) => {
       if (!result.rows.length) {
         res.status(400).send("User doesn't exist");
       } else {
-        dbMessages.getMessageSession(req.session.userId, req.query.session)
-        .then((result) => res.status(200).send(result.rows));
+        dbMessages
+          .getMessageSession(req.session.userId, req.query.session)
+          .then((result) => res.status(200).send(result.rows));
       }
-    })
+    });
   }
-})
+});
 
 app.post("/messages", (req, res) => {
   dbUsers.getUserById(req.body.receiver).then((result) => {
@@ -66,20 +67,24 @@ app.post("/messages", (req, res) => {
     } else if (!result.rows.length) {
       res.status(400).send("User doesn't exist");
     } else {
-      dbMessages.createMessage(req.session.userId, req.body.receiver, req.body.msgBody);
+      dbMessages.createMessage(
+        req.session.userId,
+        req.body.receiver,
+        req.body.msgBody
+      );
       res.status(200).send("Message sent!");
     }
-  })
-})
+  });
+});
 
 app.post("/tweets", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
   } else {
-    dbTweets.createTweet(req.session.userId, req.body.msgBody);
+    dbTweets.createTweet(req.session.userId, req.body.msgBody, req.body.retweetId);
     res.status(200).send("Tweet created!");
   }
-})
+});
 
 app.delete("/tweets", (req, res) => {
   if (!req.session.userId) {
@@ -88,42 +93,42 @@ app.delete("/tweets", (req, res) => {
     dbTweets.deleteTweetById(req.body.tweetId);
     res.status(200).send("Successfully deleted");
   }
-})
+});
 
 app.get("/tweets", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
   } else {
-    dbTweets.getTweetsForUser(req.session.userId)
-    .then((result) => res.status(200).send(result.rows));
+    dbTweets
+      .getTweetsForUser(req.session.userId)
+      .then((result) => res.status(200).send(result.rows));
   }
-})
+});
 
 app.get("/tweets/:id", (req, res) => {
-  dbTweets.getTweetById(req.params.id)
-  .then((result) => {
+  dbTweets.getTweetById(req.params.id).then((result) => {
     if (!result.rows.length) {
       res.status(400).send("Tweet with that id doesn't exist");
     } else {
       res.status(200).send(result.rows);
     }
-  })
-})
+  });
+});
 
 app.put("/tweets/", (req, res) => {
-  dbTweets.getTweetById(req.body.id)
-  .then((result) => {
+  dbTweets.getTweetById(req.body.id).then((result) => {
     if (!result.rows.length) {
       res.status(400).send("Tweet with that id doesn't exist");
     } else {
       dbTweets.updateTweetById(req.body.id, req.body.msg);
       res.status(200).send("Tweet Updated");
     }
-  })
-})
+  });
+});
 
 app.post("/register", (req, res) => {
-  dbUsers.getUserByName(req.body.userName.toLowerCase())
+  dbUsers
+    .getUserByName(req.body.userName.toLowerCase())
     .then((result) => {
       if (result.rows.length) {
         res
@@ -136,14 +141,15 @@ app.post("/register", (req, res) => {
           req.body.email,
           bcrypt.hashSync(req.body.password, 10)
         );
-        res.status(200).send("User added successfully")
+        res.status(200).send("User added successfully");
       }
     })
     .catch((err) => res.status(400).send(err));
 });
 
 app.post("/login", (req, res) => {
-  dbUsers.getUserByName(req.body.userName.toLowerCase())
+  dbUsers
+    .getUserByName(req.body.userName.toLowerCase())
     .then((result) => {
       // Check if user name exists and password is correct
       if (
@@ -163,7 +169,7 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   res.status(200).send("Succesfully logged out");
-})
+});
 
 const server = app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

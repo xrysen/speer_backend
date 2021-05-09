@@ -39,14 +39,16 @@ const resetDB = () => {
         id SERIAL PRIMARY KEY NOT NULL,
         body TEXT NOT NULL,
         user_id INTEGER REFERENCES users(id) NOT NULL,
-        date TIMESTAMP NOT NULL
+        date TIMESTAMP NOT NULL,
+        istweet BOOLEAN NOT NULL,
+        retweet_id INTEGER REFERENCES tweets(id)
       );
 
-      INSERT INTO tweets (body, user_id, date)
-      VALUES ('Just a small town girl', 1, NOW());
+      INSERT INTO tweets (body, user_id, date, istweet)
+      VALUES ('Just a small town girl', 1, NOW(), 'false');
 
-      INSERT INTO tweets (body, user_id, date) 
-      VALUES ('Living in a lonely world', 1, NOW());
+      INSERT INTO tweets (body, user_id, date, istweet) 
+      VALUES ('Living in a lonely world', 1, NOW(), 'false');
 
       DROP TABLE IF EXISTS likes CASCADE;
       CREATE TABLE likes (

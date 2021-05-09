@@ -11,8 +11,8 @@ const pool = new Pool({
 const createTweet = (userId, msgBody) => {
   pool.query(
     `
-    INSERT INTO tweets (body, user_id, date)
-    VALUES ($2, $1, NOW());
+    INSERT INTO tweets (body, user_id, date, isretweet)
+    VALUES ($2, $1, NOW(), false);
     `,
     [userId, msgBody]
   );
