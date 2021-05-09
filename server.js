@@ -109,7 +109,7 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  db.getUserByName(req.body.userName)
+  db.getUserByName(req.body.userName.toLowerCase())
     .then((result) => {
       // Check if user name exists and password is correct
       if (

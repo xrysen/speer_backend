@@ -62,8 +62,8 @@ const deleteUserByUserName = (userName) => {
   );
 };
 
-const resetUserTable = async () => {
-  await pool.query(
+const resetUserTable = () => {
+  pool.query(
     `DROP IF EXISTS users CASCADE;
 
     CREATE TABLE users (
@@ -120,5 +120,6 @@ module.exports = {
   getTweetsForUser,
   deleteTweetById,
   getTweetById,
-  updateTweetById
+  updateTweetById,
+  pool
 };
