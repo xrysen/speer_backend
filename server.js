@@ -84,8 +84,15 @@ app.get("/tweets/:id", (req, res) => {
 })
 
 app.put("/tweets/", (req, res) => {
-  db.updateTweetById(req.body.id, req.body.msg);
-  res.status(200).send("Tweet Updated");
+  db.getTweetById(req.body.id)
+  .then((result) => {
+    if (!result.rows.length) {
+      res.status(400).send("Tweet with that id doesn't exist");
+    } else {
+      db.updateTweetById(req.body.id, req.body.msg);
+      res.status(200).send("Tweet Updated");
+    }
+  })
 })
 
 app.post("/register", (req, res) => {
