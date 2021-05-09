@@ -9,7 +9,7 @@ process.env.NODE_ENV = "test";
 
 chai.use(chaiHTTP);
 
-describe("Logging in", () => {
+describe("Login", () => {
   before(() => {
     db.pool.query(
       `DROP TABLE IF EXISTS users CASCADE;
@@ -27,7 +27,7 @@ describe("Logging in", () => {
     );
   });
 
-  it ("Shouldn't allow a none registered user to login", () => {
+  it ("Shouldn't allow a none registered user to login", (done) => {
     const user = {
       userName: "jDean",
       password: "password"
@@ -36,10 +36,11 @@ describe("Logging in", () => {
     chai.request(server).post("/login").send(user)
     .end((err, res) => {
       res.should.have.status(400);
+      done();
     })
   })
 
-  it ("Should allow a user to login", () => {
+  it ("Should allow a user to login", (done) => {
     const user = {
       userName: "sassysally",
       password: "ComeHackMeBro"
@@ -48,10 +49,11 @@ describe("Logging in", () => {
     chai.request(server).post("/login").send(user)
     .end((err, res) => {
       res.should.have.status(200);
+      done();
     })
   })
 
-  it("User name isn't case sensitive when logging in", () => {
+  it("User name isn't case sensitive when logging in", (done) => {
     const user = {
       userName: "saSsySaLly",
       password: "ComeHackMeBro"
@@ -60,6 +62,7 @@ describe("Logging in", () => {
     chai.request(server).post("/login").send(user)
     .end((err, res) => {
       res.should.have.status(200);
+      done();
     })
   })
 })

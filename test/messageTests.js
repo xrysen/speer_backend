@@ -41,20 +41,24 @@ describe("Messaging", () => {
     );
   });
 
-  it("Should not show any messages if a user is not logged in", () => {
+  it("Should not show any messages if a user is not logged in", (done) => {
     chai
       .request(server)
       .get("/messages")
-      .end((err, res) => res.should.have.status(400));
+      .end((err, res) => {
+        res.should.have.status(400);
+        done();
+      });
   });
 
-  it("Should allow a logged in user to view their messages", () => {
+  it("Should allow a logged in user to view their messages", function () {
     const agent = chai.request.agent(server);
     agent
       .post("/login")
       .send({ userName: "sassysally", password: "ComeHackMeBro" })
       .end((err, res) => {
         return agent.get("/messages").end((err, res) => {
+          console.log(res.status);
           res.should.have.status(200);
           agent.close();
         });

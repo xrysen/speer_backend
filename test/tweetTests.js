@@ -9,7 +9,7 @@ process.env.NODE_ENV = "test";
 
 chai.use(chaiHTTP);
 
-describe("Creating tweets", () => {
+describe("Tweets", () => {
   before(() => {
     db.pool.query(
       `DROP TABLE IF EXISTS tweets CASCADE;

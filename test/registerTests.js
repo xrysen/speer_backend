@@ -10,7 +10,7 @@ process.env.NODE_ENV = "test";
 
 chai.use(chaiHTTP);
 
-describe("/POST /register", () => {
+describe("registration", () => {
   before(() => {
     db.pool.query(
       `DROP TABLE IF EXISTS users CASCADE;
