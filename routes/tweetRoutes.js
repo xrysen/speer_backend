@@ -69,8 +69,16 @@ router.put("/tweets/", (req, res) => {
     if (!result.rows.length) {
       res.status(400).send("Tweet with that id doesn't exist");
     } else {
-      db.updateTweetById(req.body.id, req.body.msg);
-      res.status(200).send("Tweet Updated");
+      db.getTweetById(req.body.id)
+      .then((result) => {
+        if (result.rows[0].user_id === req.session.userId) {
+          db.updateTweetById(req.body.id, req.body.msg);
+          res.status(200).send("Tweet Updated");
+
+        } else {
+          res.status(403).send("You don't have permission to do that");
+        }
+      })
     }
   });
 });
