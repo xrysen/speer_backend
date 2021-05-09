@@ -47,6 +47,16 @@ const resetDB = () => {
 
       INSERT INTO tweets (body, user_id, date) 
       VALUES ('Living in a lonely world', 1, NOW());
+
+      DROP TABLE IF EXISTS likes CASCADE;
+      CREATE TABLE likes (
+        id SERIAL PRIMARY KEY NOT NULL,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        tweet_id INTEGER REFERENCES tweets(id) ON DELETE CASCADE
+      );
+
+      INSERT INTO likes (user_id, tweet_id)
+      VALUES (1, 1);
       `
   )
 }
