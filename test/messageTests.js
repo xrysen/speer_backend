@@ -2,7 +2,7 @@ const chai = require("chai");
 const chaiHTTP = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-const db = require("../database/helpers/dbMessages");
+const db = require("./testHelpers");
 const { expect } = require("chai");
 
 process.env.NODE_ENV = "test";
@@ -11,34 +11,7 @@ chai.use(chaiHTTP);
 
 describe("Messaging", () => {
   before(() => {
-    db.pool.query(
-      `
-      DROP TABLE IF EXISTS messages CASCADE;
-
-      CREATE TABLE messages (
-        id SERIAL PRIMARY KEY NOT NULL,
-        sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        rec_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        msg_body TEXT NOT NULL,
-        sent_on TIMESTAMP
-      );
-
-      DROP TABLE IF EXISTS users CASCADE;
-       CREATE TABLE users (
-         id SERIAL PRIMARY KEY NOT NULL,
-         name VARCHAR(255) NOT NULL,
-         user_name VARCHAR(255) NOT NULL,
-         email VARCHAR(255) NOT NULL,
-         password VARCHAR(255) NOT NULL
-       );
-    
-       INSERT INTO users (name, user_name, email, password)
-       VALUES ('Sally', 'sassysally', 'sally@gmail.com', '$2b$10$E0ugzUL3fDUeNkY61IzRBeFqhLmObVtuF2sxf1VPGas0FAW3srrvO');
-      
-       INSERT INTO users (name, user_name, email, password)
-       VALUES('Bob', 'superbob', 'bob@gmail.com',  'password');
-       `
-    );
+    db.resetDB();
   });
 
   it("Should not show any messages if a user is not logged in", (done) => {

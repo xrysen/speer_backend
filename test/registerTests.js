@@ -3,7 +3,7 @@ const chai = require("chai");
 const chaiHTTP = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-const db = require("../database/helpers/dbUsers");
+const db = require("./testHelpers");
 const bcrypt = require("bcrypt");
 
 process.env.NODE_ENV = "test";
@@ -12,20 +12,7 @@ chai.use(chaiHTTP);
 
 describe("registration", () => {
   before(() => {
-    db.pool.query(
-      `DROP TABLE IF EXISTS users CASCADE;
-       CREATE TABLE users (
-         id SERIAL PRIMARY KEY NOT NULL,
-         name VARCHAR(255) NOT NULL,
-         user_name VARCHAR(255) NOT NULL,
-         email VARCHAR(255) NOT NULL,
-         password VARCHAR(255) NOT NULL
-       );
-    
-       INSERT INTO users (name, user_name, email, password)
-      VALUES ('Sally', 'sassysally', 'sally@gmail.com', 'password');
-      `
-    );
+    db.resetDB();
   });
 
   it("Should return a status of 200 on succesfull registration", () => {

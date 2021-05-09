@@ -2,7 +2,7 @@ const chai = require("chai");
 const chaiHTTP = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-const db = require("../database/helpers/dbTweets");
+const db = require("./testHelpers");
 const { expect } = require("chai");
 
 process.env.NODE_ENV = "test";
@@ -11,22 +11,7 @@ chai.use(chaiHTTP);
 
 describe("Tweets", () => {
   before(() => {
-    db.pool.query(
-      `DROP TABLE IF EXISTS tweets CASCADE;
-       CREATE TABLE tweets (
-        id SERIAL PRIMARY KEY NOT NULL,
-        body TEXT NOT NULL,
-        user_id INTEGER REFERENCES users(id) NOT NULL,
-        date TIMESTAMP NOT NULL
-      );
-
-      INSERT INTO tweets (body, user_id, date)
-      VALUES ('Just a small town girl', 1, NOW());
-
-      INSERT INTO tweets (body, user_id, date) 
-      VALUES ('Living in a lonely world', 1, NOW());
-      `
-    );
+    db.resetDB();
   });
 
   it("Shouldn't allow user to create a tweet when not logged in", () => {
