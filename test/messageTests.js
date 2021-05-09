@@ -48,18 +48,17 @@ describe("Messaging", () => {
       .end((err, res) => res.should.have.status(400));
   });
 
-  
   it("Should allow a logged in user to view their messages", () => {
     const agent = chai.request.agent(server);
     agent
-    .post("/login")
-    .send({ userName: "sassysally", password: "ComeHackMeBro" })
-    .end((err, res) => {
-      return agent.get("/messages").end((err, res) => {
-        res.should.have.status(200);
-        agent.close();
+      .post("/login")
+      .send({ userName: "sassysally", password: "ComeHackMeBro" })
+      .end((err, res) => {
+        return agent.get("/messages").end((err, res) => {
+          res.should.have.status(200);
+          agent.close();
+        });
       });
-    });
   });
 
   it("It should not allow a user to send a message to a user that doesn't exist", () => {
@@ -68,13 +67,15 @@ describe("Messaging", () => {
       .post("/login")
       .send({ userName: "sassysally", password: "ComeHackMeBro" })
       .end((err, res) => {
-        return agent.post("/messages").send({receiver: 3, msgBody: "You blocked me, didn't you?"})
-        .end((err, res) => {
-          res.should.have.status(400);
-          agent.close();
-        })
-      })
-  })
+        return agent
+          .post("/messages")
+          .send({ receiver: 3, msgBody: "You blocked me, didn't you?" })
+          .end((err, res) => {
+            res.should.have.status(400);
+            agent.close();
+          });
+      });
+  });
 
   it("Should allow a logged in user to send a message", () => {
     const agent = chai.request.agent(server);
@@ -82,11 +83,13 @@ describe("Messaging", () => {
       .post("/login")
       .send({ userName: "sassysally", password: "ComeHackMeBro" })
       .end((err, res) => {
-        return agent.post("/messages").send({receiver: 2, msgBody: "What's up?"})
-        .end((err, res) => {
-          res.should.have.status(200);
-          agent.close();
-        })
-      })
-  })
+        return agent
+          .post("/messages")
+          .send({ receiver: 2, msgBody: "What's up?" })
+          .end((err, res) => {
+            res.should.have.status(200);
+            agent.close();
+          });
+      });
+  });
 });
