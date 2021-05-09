@@ -39,5 +39,6 @@ module.exports = {
   getUserById,
   getUserByName,
   deleteUserByUserName,
-  registerNewUser
+  registerNewUser,
+  pool
 }

@@ -2,7 +2,7 @@ const chai = require("chai");
 const chaiHTTP = require("chai-http");
 const server = require("../server");
 const should = chai.should();
-const db = require("../database/db");
+const db = require("../database/helpers/dbTweets");
 const { expect } = require("chai");
 
 process.env.NODE_ENV = "test";
