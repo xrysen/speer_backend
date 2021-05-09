@@ -58,16 +58,16 @@ describe("Likes", () => {
   it("User should be able to unlike a post that they've already liked", () => {
     const agent = chai.request.agent(server);
     agent
-    .post("/login")
-    .send({userName: "sassysally", password: "ComeHackMeBro"})
-    .end((err, res) => {
-      return agent
-      .post("/like")
-      .send({ userId: 1, tweetId: 1})
+      .post("/login")
+      .send({ userName: "sassysally", password: "ComeHackMeBro" })
       .end((err, res) => {
-        res.should.have.status(200);
-        agent.close();
-      })
-    })
-  })
+        return agent
+          .post("/like")
+          .send({ userId: 1, tweetId: 1 })
+          .end((err, res) => {
+            res.should.have.status(200);
+            agent.close();
+          });
+      });
+  });
 });
