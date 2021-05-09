@@ -18,6 +18,15 @@ const createTweet = (userId, msgBody) => {
   );
 };
 
+const createRetweet = (userId, msgBody, tweet_id) => {
+  pool.query(
+    `
+    INSERT INTO tweets(body, user_id, date, isretweet, retweet_id)
+    VALUES ($2, $1, NOW(), true, $3);
+    `, [userId, msgBody, tweet_id]
+  )
+}
+
 const getTweetsForUser = (userId) => {
   return pool.query(`SELECT * FROM tweets WHERE user_id = ${userId};`);
 };
@@ -45,5 +54,6 @@ module.exports = {
   deleteTweetById,
   getTweetById,
   updateTweetById,
+  createRetweet,
   pool,
 };

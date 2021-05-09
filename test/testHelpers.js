@@ -40,14 +40,14 @@ const resetDB = () => {
         body TEXT NOT NULL,
         user_id INTEGER REFERENCES users(id) NOT NULL,
         date TIMESTAMP NOT NULL,
-        istweet BOOLEAN NOT NULL,
+        isretweet BOOLEAN DEFAULT 'false',
         retweet_id INTEGER REFERENCES tweets(id)
       );
 
-      INSERT INTO tweets (body, user_id, date, istweet)
+      INSERT INTO tweets (body, user_id, date, isretweet)
       VALUES ('Just a small town girl', 1, NOW(), 'false');
 
-      INSERT INTO tweets (body, user_id, date, istweet) 
+      INSERT INTO tweets (body, user_id, date, isretweet) 
       VALUES ('Living in a lonely world', 1, NOW(), 'false');
 
       DROP TABLE IF EXISTS likes CASCADE;

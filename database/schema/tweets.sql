@@ -5,6 +5,6 @@ CREATE TABLE tweets (
   body TEXT NOT NULL,
   user_id INTEGER references users(id) ON DELETE CASCADE,
   date TIMESTAMP NOT NULL,
-  isRetweet BOOLEAN NOT NULL,
+  isRetweet BOOLEAN DEFAULT false,
   retweet_id INTEGER REFERENCES tweets(id)
 );

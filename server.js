@@ -80,9 +80,24 @@ app.post("/messages", (req, res) => {
 app.post("/tweets", (req, res) => {
   if (!req.session.userId) {
     res.status(400).send("You must be logged in to view this page");
-  } else {
-    dbTweets.createTweet(req.session.userId, req.body.msgBody, req.body.retweetId);
+  } else if (req.body.isRetweet === "false") {
+    dbTweets.createTweet(req.session.userId, req.body.msgBody);
     res.status(200).send("Tweet created!");
+  } else if (!req.body.retweetId) {
+    res.status(400).send("Tweet id for retweet not provided");
+  } else {
+    dbTweets.getTweetById(req.body.retweetId).then((result) => {
+      if (!result.rows.length) {
+        res.status(400).send("Tweet id doesn't exist");
+      } else {
+        dbTweets.createRetweet(
+          req.session.userId,
+          req.body.msgBody,
+          req.body.retweetId
+        );
+        res.status(200).send("Succesfully retweeted post");
+      }
+    });
   }
 });
 
